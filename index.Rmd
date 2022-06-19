@@ -2,48 +2,110 @@
 title: "index"
 author: "Bry"
 date: '2022-06-17'
-documento_html :
-   tema : legible
-   tac : cierto
-   toc_profundidad : 5
-   toc_flotador :  
-     colapsado : falso
-     desplazamiento_suave : falso
+salida :
+  documento_html :
+    tema :    
+    tac : TRUE
+    toc_profundidad : 5
+    toc_flotador :
+      colapsado : false
+      desplazamiento_suave : false
  
 ---
 
-### Tabla de Columnas
+### Tabla de Columnas  
 ```{r # Importación de datos}
 estadisticas_policiales <-
-  read_delim(
-    file = "C:/Users/Bryan/OneDrive/Desktop/Procesamiento de Datos/Tarea2.cvs",
-    delim = ";",
-    col_select = c("Delito", "Fecha", "Edad", "Género", "Provincia", "Cantón")
+ readxl::read_excel ("C:/Users/Bryan/OneDrive/Desktop/Procesamiento de Datos/Tarea2/estaisticas_policiales_2021/estadisticaspoliciales2021.xls"
   )
+
 
 # Transformación de datos nacionales de covid-19
 estadisticas_policiales <-
-  estadisticas_policiales %>%
-  select(fecha = Delito,
+  estadisticas_policiales %>%  
+  select(Delito= Delito,
          Fecha,
+         Victima,
          Edad,
-         Genero = GENERO,
+         Genero = Genero,
          Provincia,
-         Canton) %>%
-  mutate(fecha = as.Date(fecha, format = "%d/%m/%Y"))
+         Canton) %>%  
+  mutate(Fecha = as.Date(Fecha, format = "%d/%m/%Y"))
 
 
 # Visualización de datos en formato tabular
-estadisticas_policiales %>%
+estadisticas_policiales %>%  
   datatable(options = list(
     pageLength = 5,
     language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
   ))
 ```
 
+### Gráfica de barras simple  
 
-### 
+```{r ggplotly - Gráfico de barras simples}
+ggplot2_barras_proporcion <-
+  estadisticas_policiales %>%  
+  ggplot(aes(x = Delito, y = stat(count), group = 1)) +
+  geom_bar() +
+  ggtitle("Tipos de Delitos") +
+  xlab("Delito") +
+  ylab("Fecha") +
+  theme_minimal()
 
-###
+ggplotly(ggplot2_barras_proporcion) %>% config(locale = 'es')
+```
 
-###
+
+### Gráfica de Delitos por Mes  
+
+```{r}
+ggplot2_histograma_estadisticas_policiales <-
+  estadisticas_policiales %>%  
+  ggplot(aes(x = Fecha)) +
+  geom_histogram(binwidth = 80) + 
+  ggtitle("Delitos por Mes") +
+  xlab("Fecha") +
+  ylab("Cantidad de Delitos") +
+  theme_minimal()
+
+ggplotly(ggplot2_histograma_estadisticas_policiales) %>% config(locale = 'es')  
+```
+### Gráfico de barras Apiladas  
+
+```{r Gráfico de barras apiladas de cantidades}
+ggplot2_barras_apiladas_cantidad <-
+  estadisticas_policiales %>%
+  ggplot(aes(x = Delito, fill = Genero)) +
+  geom_bar() +
+  ggtitle("Proporcion de delito por genero") +
+  xlab("Genero") +
+  ylab("Cantidad") +
+  labs(fill = "Delito") +
+  theme_minimal()
+
+ggplotly(ggplot2_barras_apiladas_cantidad) %>% config(locale = 'es')
+```
+
+
+### Gráfico de barras por cantón  
+
+```{r}
+ggplot2 <-
+  estadisticas_policiales %>%
+  slice_max(Canton, n = 5000) %>%
+  ggplot(aes(x = reorder(Canton, Delito), y = Delito)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Cantidad de de Delitos por Canton") +
+  xlab("Cantidad de Deitos") +
+  ylab("Canton") +
+  coord_flip() +
+  theme_minimal()
+
+ggplotly(ggplot2) %>% config(locale = 'es')
+```
+
+
+
+
+
