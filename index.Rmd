@@ -2,37 +2,20 @@
 title: "index"
 author: "Bry"
 date: '2022-06-17'
-salida :
-  documento_html :
-    tema :    
-    tac : TRUE
-    toc_profundidad : 5
-    toc_flotador :
-      colapsado : false
-      desplazamiento_suave : false
- 
+salida : "documento_html"  
 ---
 
 ### Tabla de Columnas  
 ```{r # Importación de datos}
-
-estadisticas_policiales <-
+alestadisticas_policiales <-
  readxl::read_excel ("C:/Users/Bryan/OneDrive/Desktop/Procesamiento de Datos/Tarea2/estaisticas_policiales_2021/estadisticaspoliciales2021.xls"
   )
 
-
 # Transformación de datos 
 estadisticas_policiales <-
-  estadisticas_policiales %>%    
-  select(Delito= Delito,
-         Fecha,
-         Victima,
-         Edad,
-         Genero = Genero,
-         Provincia,
-         Canton) %>%  
+  estadisticas_policiales %>%     
+  select(Delito= Delito, Fecha, Victima, Edad, Genero = Genero, Provincia, Canton) %>%  
   mutate(Fecha = as.Date(Fecha, format = "%d/%m/%Y"))
-
 
 # Visualización de datos en formato tabular
 estadisticas_policiales %>%  
@@ -47,7 +30,7 @@ estadisticas_policiales %>%
 ```{r ggplotly - Gráfico de barras simples}
 ggplot2_barras_proporcion <-
   estadisticas_policiales %>%  
-  ggplot(aes(x = Delito, y = stat(count), group = 1)) +
+  ggplot(aes(x = Delito, y = stat(count), group = 100)) +
   geom_bar() +
   ggtitle("Tipos de Delitos") +
   xlab("Delito") +
@@ -92,21 +75,15 @@ ggplotly(ggplot2_barras_apiladas_cantidad) %>% config(locale = 'es')
 ### Gráfico de barras por cantón  
 
 ```{r}
-ggplot2 <-
-  estadisticas_policiales %>%
-  slice_max(Canton, n = 2000) %>%
-  ggplot(aes(x = reorder(Canton, Delito), y = Delito)) +
-  geom_bar(stat = "identity") +
-  ggtitle("Cantidad de de Delitos por Canton") +
-  xlab("Cantidad de Deitos") +
-  ylab("Canton") +
-  coord_flip() +
+barras <- filter(estadisticas_policiales, grepl('HEREDIA|ALAJUELA|CARTAGO|SAN JOSE', Canton))
+
+Delitos_Canton <-
+  ggplot(data = barras, aes(x = Canton)) +
+  geom_bar() +
+  ggtitle("Delitos por Canton") +
+  xlab("Canton") +
+  ylab("Cantidad de Delitos") +
   theme_minimal()
 
-ggplotly(ggplot2) %>% config(locale = 'es')
+ggplotly(Delitos_Canton) %>% configs(local='es')
 ```
-
-
-
-
-
