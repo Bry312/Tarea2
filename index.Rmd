@@ -7,7 +7,7 @@ salida : "documento_html"
 
 ### Tabla de Columnas  
 ```{r # Importación de datos}
-alestadisticas_policiales <-
+estadisticas_policiales <-
  readxl::read_excel ("C:/Users/Bryan/OneDrive/Desktop/Procesamiento de Datos/Tarea2/estaisticas_policiales_2021/estadisticaspoliciales2021.xls"
   )
 
