@@ -85,5 +85,5 @@ Delitos_Canton <-
   ylab("Cantidad de Delitos") +
   theme_minimal()
 
-ggplotly(Delitos_Canton) %>% configs(local='es')
+ggplotly(Delitos_Canton) %>% config(local = 'es')
 ```
